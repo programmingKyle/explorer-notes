@@ -1,5 +1,81 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
+
+const stored = './src/stored.txt';
+
+ipcMain.handle('open-file-dialog', async () => {
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        { name: 'All Files', extensions: ['*'] },
+      ],
+      title: 'Select a file',
+    });
+
+    const selectedPaths = result.filePaths;
+    saveSelected(selectedPaths);
+  } catch (err) {
+    console.error('Error opening file dialog:', err);
+  }
+});
+
+ipcMain.handle('open-directory-dialog', async () => {
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory', 'multiSelections'],
+      title: 'Select a folder',
+    });
+
+    const selectedPaths = result.filePaths;
+    saveSelected(selectedPaths);
+  } catch (err) {
+    console.error('Error opening directory dialog:', err);
+  }
+});
+
+async function saveSelected(paths){
+  const alreadySavedContent = await fs.promises.readFile(stored, 'utf-8');
+  const savedLines = alreadySavedContent.split('\n').filter((line) => line.trim() !== '');
+
+  paths.forEach(path => {
+    if (!savedLines.includes(path)){
+      savedLines.push(path);
+    } else {
+      console.log("Its here already");
+    }
+  });
+
+  const newContent = savedLines.join('\n');
+  fs.writeFileSync(stored, newContent + '\n', 'utf-8');
+}
+
+
+
+ipcMain.handle('get-stored-content', async () => {
+  const alreadySavedContent = await fs.promises.readFile(stored, 'utf-8');
+  const savedLines = alreadySavedContent.split('\n').filter((line) => line.trim() !== '');
+  return savedLines;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -26,7 +102,21 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', async () => {
+
+  fs.access(stored, (err) => {
+    if (err) {
+      // File doesn't exist, create it
+      fs.writeFile(stored, '', 'utf-8', (writeErr) => {
+        if (writeErr) {
+          console.error('Error writing file:', writeErr);
+        }
+      });
+    }
+
+    createWindow();
+  });
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

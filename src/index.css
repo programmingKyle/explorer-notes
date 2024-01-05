@@ -35,11 +35,11 @@ h1,h2,h3,h4,h5,h6 {
 .overview-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-gap: 10px;
+  grid-gap: 15px;
   padding: 20px 10px;
   overflow: auto;
+  align-content: start;
 }
-
 .button-container {
   display: grid;
   grid-template-rows: 1fr auto;
@@ -48,10 +48,6 @@ h1,h2,h3,h4,h5,h6 {
 
 .button-container i {
   font-size: 50px;
-}
-
-.overview-grid .button-container {
-  align-self: start;
 }
 
 .user-button {
@@ -68,16 +64,24 @@ h1,h2,h3,h4,h5,h6 {
   grid-template-rows: auto 1fr auto;
 }
 
+.home-header-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  padding: 0 20px;
+  margin: 0;
+}
+
+
 .header-grid {
   display: grid;
   grid-template-columns: min-content 1fr;
   padding: 0 20px;
-  margin: 0; /* Remove default margin on the body or parent container */
+  margin: 0;
 }
 
 .header-grid h1 {
   text-align: left;
-  margin: 0; /* Remove default margin for h1 */
+  margin: 0;
 }
 
 .back-button {
@@ -94,13 +98,22 @@ textarea {
   border-radius: 10px;
   border-style: none;
   padding: 10px;
-  outline: none; /* Remove the focus outline */
+  outline: none;
 }
 
 .slim-button {
   background-color: transparent;
   border-style: none;
   color: white
+}
+
+.slim-button:hover{
+  color: rgb(197, 197, 197);
+}
+
+.file-content-header {
+  text-wrap: nowrap;
+  overflow: hidden;
 }
 
 
