@@ -4,9 +4,12 @@ const contentContainer_el = document.getElementById('contentContainer');
 
 //const acceptedExtensions = ['.txt', '.py', '.js', '.html', '.css', '.json', '.xml', '.md'];
 
+const directoryLocation = [];
+let currentDirectoryLocation = '';
+let data = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const data = await api.getStoredContent();
+    data = await api.getStoredContent();
     await populateStoredContent(data);
 });
 
@@ -21,6 +24,13 @@ addFolderButton_el.addEventListener('click', async () => {
 async function populateStoredContent(contents){
     if (contentContainer_el.innerHTML !== ''){
         contentContainer_el.innerHTML = '';
+        addFileButton_el.style.visibility = 'visible';
+        addFolderButton_el.style.visibility = 'visible';
+    }
+    if (directoryLocation.length > 0){
+        addFileButton_el.style.visibility = 'hidden';
+        addFolderButton_el.style.visibility = 'hidden';
+        populateBackButtonFolder();
     }
     for (const content of contents){
         const filePathArray = content.split('\\');
@@ -44,12 +54,14 @@ async function populateStoredContent(contents){
         itemContainer_el.append(itemHeader_el);
     
         contentContainer_el.append(itemContainer_el);
-        await folderClick(itemContainer_el, content);
+        await folderClick(itemContainer_el, content, fileName);
     }
 }
 
-async function folderClick(itemContainer, path){
+async function folderClick(itemContainer, path, fileDirectory){
     itemContainer.addEventListener('click', async () => {
+        directoryLocation.push(fileDirectory);
+        currentDirectoryLocation = path;
         const result = await api.getCurrentFolderContents({folderLocation: path})
         await populateStoredContent(result);
     })
@@ -61,11 +73,11 @@ function populateBackButtonFolder(){
     itemContainer_el.classList = 'button-container';
 
     const itemIcon_el = document.createElement('i');
-    itemIcon_el.classList = 'fas fa-file';
+    itemIcon_el.classList = 'fas fa-arrow-left';
 
     const itemHeader_el = document.createElement('h6');
     itemHeader_el.classList = 'file-content-header';
-    itemHeader_el.textContent = '...';
+    itemHeader_el.textContent = 'Back';
     
     itemContainer_el.append(itemIcon_el);
     itemContainer_el.append(itemHeader_el);
@@ -74,11 +86,32 @@ function populateBackButtonFolder(){
     backButtonClick(itemContainer_el);
 }
 
-function backButtonClick(container){
-    container.addEventListener('click', () => {
-        console.log('Go back');
-    })
+function backButtonClick(container) {
+    container.addEventListener('click', async () => {
+        directoryLocation.pop();
+
+        if (directoryLocation.length < 1) {
+            populateStoredContent(data);
+        } else {
+            try {
+                const directory = backDirectory(currentDirectoryLocation);
+                
+                const result = await api.getCurrentFolderContents({folderLocation: directory});
+                await populateStoredContent(result);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    });
 }
+
+function backDirectory(fileLocation){
+    const directorySplit = fileLocation.split('\\');
+    const directory = directorySplit.slice(0, -1).join('\\');
+    currentDirectoryLocation = directory;
+    return directory
+}
+
 
 
 
