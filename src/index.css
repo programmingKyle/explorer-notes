@@ -15,7 +15,7 @@ div {
 .base-grid {
   height: 100%;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   overflow: hidden;
 }
 
@@ -29,7 +29,12 @@ h1,h2,h3,h4,h5,h6 {
 .container {
   background-color: rgb(56, 56, 56);
   border-radius: 10px;
-  margin: 10px;
+  margin: 0px 10px 10px 10px;
+}
+
+.findFileFolderContainer{
+  background-color: rgb(56, 56, 56);
+  border-radius: 10px;
 }
 
 .overview-grid {
@@ -66,10 +71,23 @@ h1,h2,h3,h4,h5,h6 {
 
 .home-header-grid {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   padding: 0 20px;
   margin: 0;
 }
+
+.input-button {
+  border-radius: 10px;
+  background-color: #7C90DB;
+  padding: 10px 0px;
+  border-style: none;
+  color: black;
+}
+
+.input-button:hover{
+  background-color: #889ADE;
+}
+
 
 
 .header-grid {
@@ -114,6 +132,45 @@ textarea {
 .file-content-header {
   text-wrap: nowrap;
   overflow: hidden;
+}
+
+
+
+
+input {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+  Arial, sans-serif;
+  background-color: #252525;
+  color: #9593D9;
+  border-radius: 10px;
+  border-style: none;
+  padding: 5px;
+  font-size: 16px;
+  outline: none; /* Remove the focus outline */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.733); /* Semi-transparent overlay background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.centered-container {
+  width: 500px;
+  background: #313131;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  display: grid;
+  grid-gap: 5px;
 }
 
 

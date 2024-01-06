@@ -1,15 +1,15 @@
 const addFileButton_el = document.getElementById('addFileButton');
 const addFolderButton_el = document.getElementById('addFolderButton');
 const contentContainer_el = document.getElementById('contentContainer');
-
+const locationHeader_el = document.getElementById('locationHeader');
+const searchForContentDiv_el = document.getElementById('searchForContentDiv');
 //const acceptedExtensions = ['.txt', '.py', '.js', '.html', '.css', '.json', '.xml', '.md'];
 
 const directoryLocation = [];
 let currentDirectoryLocation = '';
-let data = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    data = await api.getStoredContent();
+    const data = await api.getStoredContent();
     await populateStoredContent(data);
 });
 
@@ -24,13 +24,13 @@ addFolderButton_el.addEventListener('click', async () => {
 async function populateStoredContent(contents){
     if (contentContainer_el.innerHTML !== ''){
         contentContainer_el.innerHTML = '';
-        addFileButton_el.style.visibility = 'visible';
-        addFolderButton_el.style.visibility = 'visible';
     }
     if (directoryLocation.length > 0){
-        addFileButton_el.style.visibility = 'hidden';
-        addFolderButton_el.style.visibility = 'hidden';
+        searchForContentDiv_el.style.visibility = 'hidden';
         populateBackButtonFolder();
+    } else {
+        searchForContentDiv_el.style.visibility = 'visible';
+        currentDirectoryLocation = '';
     }
     for (const content of contents){
         const filePathArray = content.split('\\');
@@ -91,6 +91,7 @@ function backButtonClick(container) {
         directoryLocation.pop();
 
         if (directoryLocation.length < 1) {
+            const data = await api.getStoredContent();
             populateStoredContent(data);
         } else {
             try {

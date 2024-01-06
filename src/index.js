@@ -1,13 +1,13 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const util = require('util');
 const readdir = util.promisify(fs.readdir);
 
 const acceptedExtensions = ['.txt', '.py', '.js', '.html', '.css', '.json', '.xml', '.md'];
 
-
+const baseFileLocation = './src/baseFiles';
 const stored = './src/stored.txt';
 
 ipcMain.handle('open-file-dialog', async () => {
@@ -57,14 +57,40 @@ async function saveSelected(paths){
   fs.writeFileSync(stored, newContent + '\n', 'utf-8');
 }
 
-
-
 ipcMain.handle('get-stored-content', async () => {
   const alreadySavedContent = await fs.promises.readFile(stored, 'utf-8');
   const savedLines = alreadySavedContent.split('\n').filter((line) => line.trim() !== '');
+
+  const baseFileResults = await getBaseFiles();
+  baseFileResults.forEach(element => {
+    savedLines.push(element);    
+  });
   return savedLines;
 });
 
+async function getBaseFiles(){
+  try {
+    const files = await readdir(baseFileLocation);
+    const returnContent = [];
+
+    for (const file of files) {
+      const fileExt = path.extname(file).toLowerCase();
+      if (fileExt === '') {
+        if (fs.statSync(path.join(baseFileLocation, file)).isDirectory()) {
+          const folderDirectory = path.join(baseFileLocation, file);
+          returnContent.push(folderDirectory);
+        }
+      } else {
+        const fileDirectory = path.join(baseFileLocation, file);
+        returnContent.push(fileDirectory);
+      }
+    }
+    return returnContent;
+  } catch (err) {
+    console.error('Error reading folder contents:', err);
+    return [];
+  }
+}
 
 ipcMain.handle('get-current-folder-contents', async (event, data) => {
   if (!data || !data.folderLocation) return;
@@ -94,13 +120,71 @@ ipcMain.handle('get-current-folder-contents', async (event, data) => {
   }
 });
 
+ipcMain.handle('create-file', (req, data) => {
+  if (!data || !data.fileName) return;
+
+  if (data.location === '') {
+    // Provide a valid file path, for example, appending a filename to the baseFileLocation
+    const filePath = path.join(baseFileLocation, addExtension(data.fileName));
+
+    fs.writeFile(filePath, '', 'utf-8', (err) => {
+      if (err) {
+        console.error('Error creating file:', err);
+        // Handle error, send a response, etc.
+        return;
+      }
+      // Handle success, send a response, etc.
+    });
+  } else {
+    const filePathInDirectory = path.join(data.location, addExtension(data.fileName));
+    // Additional logic for handling files with specified location
+    fs.writeFile(filePathInDirectory, '', 'utf-8', (err) => {
+      if (err) {
+        console.error('Error creating file:', err);
+        // Handle error, send a response, etc.
+        return;
+      }
+      // Handle success, send a response, etc.
+    });
+  }
+});
+
+function addExtension(fileName) {
+  const ext = path.extname(fileName);
+  return ext !== '' ? fileName : fileName + '.txt';
+}
 
 
 
 
+ipcMain.handle('create-folder', (req, data) => {
+  if (!data || !data.folderName) return;
 
+  if (data.location === '') {
+    // Provide a valid folder path, for example, appending a folder name to the baseFileLocation
+    const folderPath = path.join(baseFileLocation, data.folderName);
+    fs.mkdir(folderPath, { recursive: true }, (err) => {
+      if (err) {
+        console.error('Error creating folder:', err);
+        // Handle error, send a response, etc.
+        return;
+      }
+      // Handle success, send a response, etc.
+    });
+  } else {
+    const folderPathInDirectory = path.join(data.location, data.folderName);
 
-
+    // Additional logic for handling folders with specified location
+    fs.mkdir(folderPathInDirectory, { recursive: true }, (err) => {
+      if (err) {
+        console.error('Error creating folder:', err);
+        // Handle error, send a response, etc.
+        return;
+      }
+      // Handle success, send a response, etc.
+    });
+  }
+});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -129,6 +213,12 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
 
+  const baseFolder = './src/baseFiles';
+  try {
+    await fs.ensureDir(baseFolder);
+  } catch (err) {
+    console.error('Error ensuring directory:', err);
+  }
   fs.access(stored, (err) => {
     if (err) {
       // File doesn't exist, create it

@@ -7,4 +7,7 @@ contextBridge.exposeInMainWorld('api', {
     getStoredContent: () => ipcRenderer.invoke('get-stored-content'),
 
     getCurrentFolderContents: (data) => ipcRenderer.invoke('get-current-folder-contents', data),
+
+    createFile: (data) => ipcRenderer.invoke('create-file', data),
+    createFolder: (data) => ipcRenderer.invoke('create-folder', data),
 });
