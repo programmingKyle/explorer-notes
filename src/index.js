@@ -2,6 +2,12 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+const util = require('util');
+const readdir = util.promisify(fs.readdir);
+
+const acceptedExtensions = ['.txt', '.py', '.js', '.html', '.css', '.json', '.xml', '.md'];
+
+
 const stored = './src/stored.txt';
 
 ipcMain.handle('open-file-dialog', async () => {
@@ -60,14 +66,33 @@ ipcMain.handle('get-stored-content', async () => {
 });
 
 
+ipcMain.handle('get-current-folder-contents', async (event, data) => {
+  if (!data || !data.folderLocation) return;
 
+  const folderLocation = data.folderLocation;
 
+  try {
+    const files = await readdir(folderLocation);
+    const returnContent = [];
 
-
-
-
-
-
+    for (const file of files) {
+      const fileExt = path.extname(file).toLowerCase();
+      if (fileExt === '') {
+        if (fs.statSync(path.join(folderLocation, file)).isDirectory()) {
+          const folderDirectory = path.join(folderLocation, file);
+          returnContent.push(folderDirectory);
+        }
+      } else {
+        const fileDirectory = path.join(folderLocation, file);
+        returnContent.push(fileDirectory);
+      }
+    }
+    return returnContent;
+  } catch (err) {
+    console.error('Error reading folder contents:', err);
+    return [];
+  }
+});
 
 
 
