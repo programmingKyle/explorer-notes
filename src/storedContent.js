@@ -10,18 +10,32 @@ let currentDirectoryLocation = '';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const data = await api.getStoredContent();
-    await populateStoredContent(data);
+    await populateFolderContent(data);
 });
 
 addFileButton_el.addEventListener('click', async () => {
-    api.openFileDialog();
+    const result = await api.openFileDialog();
+    if (result === true){
+        console.log('File Added Successfully');
+        const data = await api.getStoredContent();
+        await populateFolderContent(data);
+    } else {
+        console.log('Error adding file!');
+    }
 });
 
 addFolderButton_el.addEventListener('click', async () => {
-    api.openDirectoryDialog();
+    const result = await api.openDirectoryDialog();
+    if (result === true){
+        console.log('Folder Added Successfully');
+        const data = await api.getStoredContent();
+        await populateFolderContent(data);
+    } else {
+        console.log('Error adding file!');
+    }
 });
 
-async function populateStoredContent(contents){
+async function populateFolderContent(contents){
     if (contentContainer_el.innerHTML !== ''){
         contentContainer_el.innerHTML = '';
     }
@@ -63,7 +77,7 @@ async function folderClick(itemContainer, path, fileDirectory){
         directoryLocation.push(fileDirectory);
         currentDirectoryLocation = path;
         const result = await api.getCurrentFolderContents({folderLocation: path})
-        await populateStoredContent(result);
+        await populateFolderContent(result);
     })
 }
 
@@ -92,13 +106,13 @@ function backButtonClick(container) {
 
         if (directoryLocation.length < 1) {
             const data = await api.getStoredContent();
-            populateStoredContent(data);
+            await populateFolderContent(data);
         } else {
             try {
                 const directory = backDirectory(currentDirectoryLocation);
                 
                 const result = await api.getCurrentFolderContents({folderLocation: directory});
-                await populateStoredContent(result);
+                await populateFolderContent(result);
             } catch (error) {
                 console.error(error);
             }
@@ -112,10 +126,6 @@ function backDirectory(fileLocation){
     currentDirectoryLocation = directory;
     return directory
 }
-
-
-
-
 
 function isFileOrFolder(file) {
     if (file.includes('.')) {

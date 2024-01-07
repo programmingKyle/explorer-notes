@@ -12,8 +12,6 @@ const addFolderCloseButton_el = document.getElementById('addFolderCloseButton');
 const addFolderInput_el = document.getElementById('addFolderInput');
 const confirmAddNewFolderButton_el = document.getElementById('confirmAddNewFolderButton');
 
-
-
 addNewFileButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'flex';
 });
@@ -23,12 +21,13 @@ addFileCloseButton_el.addEventListener('click', () => {
 });
 
 confirmAddNewFileButton_el.addEventListener('click', async () => {
-    await api.createFile({location: currentDirectoryLocation, fileName: addFileInput_el.value});
-    addFileOverlay_el.style.display = 'none';
+    if (addFileInput_el.value !== '') {
+        await api.createFile({ location: currentDirectoryLocation, fileName: addFileInput_el.value });
+        addFileOverlay_el.style.display = 'none';
+        await repopulateOnAdd();
+        addFileInput_el.value = '';
+    }
 });
-
-
-
 
 
 addNewFolderButton_el.addEventListener('click', () => {
@@ -40,6 +39,22 @@ addFolderCloseButton_el.addEventListener('click', () => {
 });
 
 confirmAddNewFolderButton_el.addEventListener('click', async () => {
-    await api.createFolder({location: currentDirectoryLocation, folderName: addFolderInput_el.value});
-    addFolderOverlay_el.style.display = 'none';
+    if (addFolderInput_el.value !== ''){
+        await api.createFolder({location: currentDirectoryLocation, folderName: addFolderInput_el.value});
+        addFolderOverlay_el.style.display = 'none';
+        await repopulateOnAdd();    
+        addFolderInput_el.value = '';
+    }
 });
+
+async function repopulateOnAdd(){
+    console.log('Repopulate');
+    if (directoryLocation.length < 1){
+        const data = await api.getStoredContent();
+        await populateFolderContent(data);
+    } else {
+        const result = await api.getCurrentFolderContents({folderLocation: currentDirectoryLocation});
+        console.log(result);
+        await populateFolderContent(result);
+    }
+}

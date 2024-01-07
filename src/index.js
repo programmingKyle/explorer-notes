@@ -21,9 +21,11 @@ ipcMain.handle('open-file-dialog', async () => {
     });
 
     const selectedPaths = result.filePaths;
-    saveSelected(selectedPaths);
+    await saveSelected(selectedPaths);
+    return true;
   } catch (err) {
     console.error('Error opening file dialog:', err);
+    return false;
   }
 });
 
@@ -35,9 +37,11 @@ ipcMain.handle('open-directory-dialog', async () => {
     });
 
     const selectedPaths = result.filePaths;
-    saveSelected(selectedPaths);
+    await saveSelected(selectedPaths);
+    return true;
   } catch (err) {
     console.error('Error opening directory dialog:', err);
+    return false;
   }
 });
 
@@ -120,32 +124,41 @@ ipcMain.handle('get-current-folder-contents', async (event, data) => {
   }
 });
 
-ipcMain.handle('create-file', (req, data) => {
+
+ipcMain.handle('create-file', async (req, data) => {
   if (!data || !data.fileName) return;
 
-  if (data.location === '') {
-    // Provide a valid file path, for example, appending a filename to the baseFileLocation
-    const filePath = path.join(baseFileLocation, addExtension(data.fileName));
+  const createFile = async (filePath, iteration = 0) => {
+    const ext = path.extname(filePath);
+    const baseFileName = path.basename(filePath, ext);
+    const currentFileName = iteration === 0 ? baseFileName : `${baseFileName}${iteration}`;
+    const currentFilePath = path.join(path.dirname(filePath), `${currentFileName}${ext}`);
 
-    fs.writeFile(filePath, '', 'utf-8', (err) => {
-      if (err) {
-        console.error('Error creating file:', err);
-        // Handle error, send a response, etc.
-        return;
+    try {
+      await fs.access(currentFilePath, fs.constants.F_OK);
+      // File already exists, try with a different iteration
+      await createFile(filePath, iteration + 1);
+    } catch (err) {
+      // File does not exist, create it
+      try {
+        await fs.writeFile(currentFilePath, '', 'utf-8');
+        // Handle success, send a response, etc.
+      } catch (writeErr) {
+        console.error('Error creating file:', writeErr);
       }
-      // Handle success, send a response, etc.
-    });
-  } else {
-    const filePathInDirectory = path.join(data.location, addExtension(data.fileName));
-    // Additional logic for handling files with specified location
-    fs.writeFile(filePathInDirectory, '', 'utf-8', (err) => {
-      if (err) {
-        console.error('Error creating file:', err);
-        // Handle error, send a response, etc.
-        return;
-      }
-      // Handle success, send a response, etc.
-    });
+    }
+  };
+
+  try {
+    if (data.location === '') {
+      const filePath = path.join(baseFileLocation, addExtension(data.fileName));
+      await createFile(filePath);
+    } else {
+      const filePathInDirectory = path.join(data.location, addExtension(data.fileName));
+      await createFile(filePathInDirectory);
+    }
+  } catch (err) {
+    console.error('Error creating file:', err);
   }
 });
 
@@ -156,33 +169,34 @@ function addExtension(fileName) {
 
 
 
-
 ipcMain.handle('create-folder', (req, data) => {
   if (!data || !data.folderName) return;
 
+  const createFolder = (folderPath, suffix = 0) => {
+    const currentFolderPath = suffix === 0 ? folderPath : `${folderPath}${suffix}`;
+
+    if (fs.existsSync(currentFolderPath)) {
+      // Folder already exists, try with a different suffix
+      createFolder(folderPath, suffix + 1);
+    } else {
+      // Folder does not exist, create it
+      fs.mkdir(currentFolderPath, { recursive: true }, (err) => {
+        if (err) {
+          console.error('Error creating folder:', err);
+          // Handle error, send a response, etc.
+        } else {
+          // Handle success, send a response, etc.
+        }
+      });
+    }
+  };
   if (data.location === '') {
     // Provide a valid folder path, for example, appending a folder name to the baseFileLocation
     const folderPath = path.join(baseFileLocation, data.folderName);
-    fs.mkdir(folderPath, { recursive: true }, (err) => {
-      if (err) {
-        console.error('Error creating folder:', err);
-        // Handle error, send a response, etc.
-        return;
-      }
-      // Handle success, send a response, etc.
-    });
+    createFolder(folderPath);
   } else {
     const folderPathInDirectory = path.join(data.location, data.folderName);
-
-    // Additional logic for handling folders with specified location
-    fs.mkdir(folderPathInDirectory, { recursive: true }, (err) => {
-      if (err) {
-        console.error('Error creating folder:', err);
-        // Handle error, send a response, etc.
-        return;
-      }
-      // Handle success, send a response, etc.
-    });
+    createFolder(folderPathInDirectory);
   }
 });
 
