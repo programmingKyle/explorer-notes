@@ -200,6 +200,51 @@ ipcMain.handle('create-folder', (req, data) => {
   }
 });
 
+
+ipcMain.handle('is-file-or-directory', (req, data) => {
+  if (!data || !data.path) return;
+  try {
+    const stats = fs.statSync(data.path);
+    return stats.isFile() ? 'File' : stats.isDirectory() ? 'Directory' : 'Unknown';
+  } catch (error) {
+      console.error(error);
+      return 'Error';
+  }
+});
+
+
+ipcMain.handle('text-file-handler', (req, data) => {
+  if (!data || !data.request || !data.path) return;
+  switch(data.request) {
+    case 'Read':
+      const content = readTextFile(data.path);
+      return content;
+    case 'Write':
+      writeTextFile(data.path, data.content);
+      break;
+  }
+});
+
+function readTextFile(path) {
+  try {
+    // Read the contents of the text file synchronously
+    const fileContent = fs.readFileSync(path, 'utf-8');
+    return fileContent;
+  } catch (error) {
+    console.error(`Error reading file at ${path}: ${error.message}`);
+    return null;
+  }
+}
+
+function writeTextFile(path, content){
+  try {
+    fs.writeFileSync(path, content, 'utf-8');
+  } catch (error) {
+    console.error(`Error writing file at ${path}: ${error.message}`);
+    return null;
+  }
+}
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();

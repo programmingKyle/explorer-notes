@@ -9,14 +9,40 @@ const directoryLocation = [];
 let currentDirectoryLocation = '';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const data = await api.getStoredContent();
-    await populateFolderContent(data);
+    if (!returnFromNotepad()) {
+        const data = await api.getStoredContent();
+        await populateFolderContent(data);
+    } else {
+        const result = await api.getCurrentFolderContents({ folderLocation: currentDirectoryLocation });
+        await populateFolderContent(result);
+    }
 });
+
+function returnFromNotepad() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (!urlParams.has('path')) {
+        return false;
+    } else {
+        currentDirectoryLocation = urlParams.get('path');
+
+        // Check if directoryLocationString is not null or undefined
+        const directoryLocationString = urlParams.get('directoryLocation');
+        if (directoryLocationString) {
+            const parsedDirectoryLocation = JSON.parse(decodeURIComponent(directoryLocationString));
+            
+            // Push elements into directoryLocation array
+            parsedDirectoryLocation.forEach(element => {
+                directoryLocation.push(element);
+            });
+        }
+        return true;
+    }
+}
 
 addFileButton_el.addEventListener('click', async () => {
     const result = await api.openFileDialog();
     if (result === true){
-        console.log('File Added Successfully');
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     } else {
@@ -27,7 +53,6 @@ addFileButton_el.addEventListener('click', async () => {
 addFolderButton_el.addEventListener('click', async () => {
     const result = await api.openDirectoryDialog();
     if (result === true){
-        console.log('Folder Added Successfully');
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     } else {
@@ -68,18 +93,53 @@ async function populateFolderContent(contents){
         itemContainer_el.append(itemHeader_el);
     
         contentContainer_el.append(itemContainer_el);
-        await folderClick(itemContainer_el, content, fileName);
+        await contentItemClick(itemContainer_el, content, fileName);
     }
 }
 
-async function folderClick(itemContainer, path, fileDirectory){
+async function contentItemClick(itemContainer, path, locationName){
     itemContainer.addEventListener('click', async () => {
-        directoryLocation.push(fileDirectory);
-        currentDirectoryLocation = path;
-        const result = await api.getCurrentFolderContents({folderLocation: path})
-        await populateFolderContent(result);
+        const result = await api.isFileOrDirectory({path: path});
+        if (result === 'Directory') {
+            folderClick(path, locationName)
+        } else if (result === 'File') { 
+            fileClick(path, locationName);
+        }
     })
 }
+
+async function folderClick(path, locationName){
+    directoryLocation.push(locationName);
+    currentDirectoryLocation = path;
+    const result = await api.getCurrentFolderContents({folderLocation: path})
+    await populateFolderContent(result);
+}
+
+async function fileClick(path, locationName) {
+    directoryLocation.push(locationName);
+    currentDirectoryLocation = path;
+
+    // Construct the URL parameters without using stringify or join
+    let timerLocation = `notepad.html?path=${encodeURIComponent(path)}&locationName=${encodeURIComponent(locationName)}`;
+
+    // Append the directoryLocation array to the URL
+    if (directoryLocation.length > 0) {
+        timerLocation += '&directoryLocation=';
+
+        for (let i = 0; i < directoryLocation.length; i++) {
+            if (i > 0) {
+                timerLocation += ',';
+            }
+            timerLocation += encodeURIComponent(directoryLocation[i]);
+        }
+    }
+
+    window.location.href = timerLocation;
+}
+
+
+
+
 
 
 function populateBackButtonFolder(){

@@ -48,13 +48,11 @@ confirmAddNewFolderButton_el.addEventListener('click', async () => {
 });
 
 async function repopulateOnAdd(){
-    console.log('Repopulate');
     if (directoryLocation.length < 1){
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     } else {
         const result = await api.getCurrentFolderContents({folderLocation: currentDirectoryLocation});
-        console.log(result);
         await populateFolderContent(result);
     }
 }
