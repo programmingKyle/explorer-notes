@@ -36,6 +36,12 @@ h1,h2,h3,h4,h5,h6 {
   margin: 0px 10px 10px 10px;
 }
 
+.notepad-container {
+  background-color: transparent;
+  border-radius: 10px;
+  margin: 0px 10px 10px 10px;
+}
+
 .findFileFolderContainer{
   background-color: rgb(56, 56, 56);
   border-radius: 10px;
@@ -112,8 +118,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 textarea {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-  Arial, sans-serif;
+  font-family: 'Consolas', monospace;
   background-color: #252525;
   color: #9593D9;
   resize: none;
@@ -141,18 +146,40 @@ textarea {
 }
 
 
+.text-control-button {
+  background-color: transparent;
+  border-style: none;
+  color: rgb(71, 71, 71);
+}
+
+.text-control-button:hover{
+  color: rgb(133, 133, 133)
+}
+
+.text-control-button.active {
+  color: white;
+}
 
 
-input {
+
+
+
+
+textarea {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
   Arial, sans-serif;
   background-color: #252525;
   color: #9593D9;
   border-radius: 10px;
   border-style: none;
-  padding: 5px;
+  padding: 10px;
   font-size: 16px;
   outline: none; /* Remove the focus outline */
+  white-space: nowrap;
+}
+
+textarea.wrapping {
+  white-space: normal; /* or "wrap" depending on your desired behavior */
 }
 
 .overlay {

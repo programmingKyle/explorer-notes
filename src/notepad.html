@@ -13,9 +13,12 @@
         <button id="backButton" class="slim-button fas fa-arrow-left back-button"></button>
         <h1 class="main-header" id="fileNameHeader">File Name Here</h1>
     </div>
-    <div class="container">
-      <div style="display: flex; height: 100%;">
-        <textarea name="textFileTextArea" id="textFileTextArea" cols="30" rows="10"></textarea>            
+    <div class="notepad-container">
+      <div style="display: flex; height: 100%; flex-direction: column;">
+        <div style="align-content: left; margin-bottom: 5px;">
+          <button id="toggleTextWrappingButton" class="text-control-button active fas fa-paragraph"></button>
+        </div>
+        <textarea class="wrapping" name="textFileTextArea" id="textFileTextArea" cols="30" rows="10"></textarea>            
       </div>
     </div>
     <button id="saveTextFile" class="user-button" style="visibility: hidden;">Save</button>

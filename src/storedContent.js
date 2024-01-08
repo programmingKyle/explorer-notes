@@ -12,9 +12,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!returnFromNotepad()) {
         const data = await api.getStoredContent();
         await populateFolderContent(data);
-    } else {
+    } else if (directoryLocation.length >= 1) {
         const result = await api.getCurrentFolderContents({ folderLocation: currentDirectoryLocation });
         await populateFolderContent(result);
+    } else {
+        const data = await api.getStoredContent();
+        await populateFolderContent(data);
     }
 });
 
@@ -25,12 +28,11 @@ function returnFromNotepad() {
         return false;
     } else {
         currentDirectoryLocation = urlParams.get('path');
-
         // Check if directoryLocationString is not null or undefined
         const directoryLocationString = urlParams.get('directoryLocation');
         if (directoryLocationString) {
             const parsedDirectoryLocation = JSON.parse(decodeURIComponent(directoryLocationString));
-            
+
             // Push elements into directoryLocation array
             parsedDirectoryLocation.forEach(element => {
                 directoryLocation.push(element);
@@ -172,7 +174,6 @@ function backButtonClick(container) {
         } else {
             try {
                 const directory = backDirectory(currentDirectoryLocation);
-                
                 const result = await api.getCurrentFolderContents({folderLocation: directory});
                 await populateFolderContent(result);
             } catch (error) {
@@ -183,7 +184,7 @@ function backButtonClick(container) {
 }
 
 function backDirectory(fileLocation){
-    const directorySplit = fileLocation.split('\\');
+    const directorySplit = fileLocation.split(/[\\/]/);
     const directory = directorySplit.slice(0, -1).join('\\');
     currentDirectoryLocation = directory;
     return directory
