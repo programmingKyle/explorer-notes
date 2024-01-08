@@ -245,6 +245,12 @@ function writeTextFile(path, content){
   }
 }
 
+ipcMain.handle('drop-save-handler', async (req, data) => {
+  if (!data || !data.paths) return;
+  await saveSelected(data.paths);
+});
+
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();

@@ -14,4 +14,6 @@ contextBridge.exposeInMainWorld('api', {
     createFolder: (data) => ipcRenderer.invoke('create-folder', data),
 
     textFileHandler: (data) => ipcRenderer.invoke('text-file-handler', data),
+
+    dropSaveHandler: (data) => ipcRenderer.invoke('drop-save-handler', data),
 });
