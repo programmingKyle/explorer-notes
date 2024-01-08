@@ -29,7 +29,6 @@ confirmAddNewFileButton_el.addEventListener('click', async () => {
     }
 });
 
-
 addNewFolderButton_el.addEventListener('click', () => {
     addFolderOverlay_el.style.display = 'flex';
 });

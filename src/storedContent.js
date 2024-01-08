@@ -65,10 +65,10 @@ async function populateFolderContent(contents){
         contentContainer_el.innerHTML = '';
     }
     if (directoryLocation.length > 0){
-        searchForContentDiv_el.style.visibility = 'hidden';
+        searchForContentDiv_el.style.display = 'none';
         populateBackButtonFolder();
     } else {
-        searchForContentDiv_el.style.visibility = 'visible';
+        searchForContentDiv_el.style.display = 'flex';
         currentDirectoryLocation = '';
     }
     for (const content of contents){
@@ -111,6 +111,7 @@ async function contentItemClick(itemContainer, path, locationName){
 async function folderClick(path, locationName){
     directoryLocation.push(locationName);
     currentDirectoryLocation = path;
+    locationHeader_el.textContent = locationName;
     const result = await api.getCurrentFolderContents({folderLocation: path})
     await populateFolderContent(result);
 }
@@ -165,6 +166,7 @@ function backButtonClick(container) {
         directoryLocation.pop();
 
         if (directoryLocation.length < 1) {
+            locationHeader_el.textContent = 'Overview';
             const data = await api.getStoredContent();
             await populateFolderContent(data);
         } else {

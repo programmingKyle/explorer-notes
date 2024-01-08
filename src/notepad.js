@@ -7,9 +7,22 @@ let path = '';
 let locationName
 let directoryLocation = [];
 
+let changeMade = false;
+
 document.addEventListener('DOMContentLoaded', () => {
     initialPopulation();
 });
+
+textFileTextArea_el.addEventListener('input', () => {
+    if (!changeMade){
+        toggleSaveButton();
+    }
+});
+
+function toggleSaveButton() {
+    changeMade = !changeMade; // Toggle the changeMade flag
+    saveTextFile_el.style.visibility = changeMade ? 'visible' : 'hidden';
+}
 
 function initialPopulation() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -35,6 +48,7 @@ async function textFilePopulation(path){
 
 saveTextFile_el.addEventListener('click', async () => {
     await api.textFileHandler({request: 'Write', path: path, content: textFileTextArea_el.value});
+    toggleSaveButton();
 });
 
 backButton_el.addEventListener('click', () => {
@@ -43,6 +57,7 @@ backButton_el.addEventListener('click', () => {
     const directoryLocationString = encodeURIComponent(JSON.stringify(directoryLocation));
     window.location.href = `index.html?path=${encodeURIComponent(parentDirectory)}&directoryLocation=${directoryLocationString}`;
 });
+
 function getParentDirectory(path) {
     const parts = path.split('\\');
     parts.pop(); 

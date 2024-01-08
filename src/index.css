@@ -7,6 +7,10 @@ body {
   background-color: black;
 }
 
+.main-header {
+  overflow: hidden;
+}
+
 div {
   margin: 0px;
   padding: 0px;
@@ -39,12 +43,13 @@ h1,h2,h3,h4,h5,h6 {
 
 .overview-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fill, 75px); /* Fixed width of 75px for each column */
   grid-gap: 15px;
   padding: 20px 10px;
   overflow: auto;
   align-content: start;
 }
+
 .button-container {
   display: grid;
   grid-template-rows: 1fr auto;
@@ -117,6 +122,7 @@ textarea {
   border-style: none;
   padding: 10px;
   outline: none;
+  font-size: 16px;
 }
 
 .slim-button {
