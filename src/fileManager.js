@@ -12,6 +12,10 @@ const addFolderCloseButton_el = document.getElementById('addFolderCloseButton');
 const addFolderInput_el = document.getElementById('addFolderInput');
 const confirmAddNewFolderButton_el = document.getElementById('confirmAddNewFolderButton');
 
+function toggleErrorInput(inputElement){
+
+}
+
 addNewFileButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'flex';
 });
@@ -26,6 +30,8 @@ confirmAddNewFileButton_el.addEventListener('click', async () => {
         addFileOverlay_el.style.display = 'none';
         await repopulateOnAdd();
         addFileInput_el.value = '';
+    } else {
+        addFileInput_el.classList.add('error');
     }
 });
 
@@ -43,6 +49,8 @@ confirmAddNewFolderButton_el.addEventListener('click', async () => {
         addFolderOverlay_el.style.display = 'none';
         await repopulateOnAdd();    
         addFolderInput_el.value = '';
+    } else {
+        addFolderInput_el.classList.add('error');
     }
 });
 
@@ -55,3 +63,18 @@ async function repopulateOnAdd(){
         await populateFolderContent(result);
     }
 }
+
+
+// Change Check for error styles
+addFileInput_el.addEventListener('focus', () => {
+    if (addFileInput_el.classList.contains('error')) {
+        addFileInput_el.classList.remove('error');
+    }
+});
+
+addFolderInput_el.addEventListener('focus', () => {
+    if (addFolderInput_el.classList.contains('error')) {
+        addFolderInput_el.classList.remove('error');
+    }
+})
+

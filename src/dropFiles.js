@@ -39,7 +39,13 @@ contentContainer_el.addEventListener('drop', async (e) => {
         for (const f of e.dataTransfer.files) {
             paths.push(f.path);
         }
-        await api.dropSaveHandler({ paths: paths });
+        const allSaveSuccess = await api.dropSaveHandler({ paths: paths });
+        if (allSaveSuccess === 'Failed'){
+            contentContainer_el.classList.add('error');
+            setTimeout(() => {
+                contentContainer_el.classList.remove('error');
+            }, 2000);
+        }
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     }

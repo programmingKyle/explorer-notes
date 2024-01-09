@@ -3,6 +3,7 @@ const addFolderButton_el = document.getElementById('addFolderButton');
 const contentContainer_el = document.getElementById('contentContainer');
 const locationHeader_el = document.getElementById('locationHeader');
 const searchForContentDiv_el = document.getElementById('searchForContentDiv');
+const refreshButton_el = document.getElementById('refreshButton');
 //const acceptedExtensions = ['.txt', '.py', '.js', '.html', '.css', '.json', '.xml', '.md'];
 
 const directoryLocation = [];
@@ -13,6 +14,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     } else if (directoryLocation.length >= 1) {
+        const result = await api.getCurrentFolderContents({ folderLocation: currentDirectoryLocation });
+        await populateFolderContent(result);
+    } else {
+        const data = await api.getStoredContent();
+        await populateFolderContent(data);
+    }
+});
+
+refreshButton_el.addEventListener('click', async () => {
+    if (directoryLocation.length >= 1) {
         const result = await api.getCurrentFolderContents({ folderLocation: currentDirectoryLocation });
         await populateFolderContent(result);
     } else {
@@ -43,21 +54,29 @@ function returnFromNotepad() {
 }
 
 addFileButton_el.addEventListener('click', async () => {
-    const result = await api.openFileDialog();
-    if (result === true){
+    const hasFailed = await api.openFileDialog();
+    if (!hasFailed){
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     } else {
+        contentContainer_el.classList.add('error');
+        setTimeout(() => {
+            contentContainer_el.classList.remove('error');
+        }, 2000);
         console.log('Error adding file!');
     }
 });
 
 addFolderButton_el.addEventListener('click', async () => {
-    const result = await api.openDirectoryDialog();
-    if (result === true){
+    const hasFailed = await api.openDirectoryDialog();
+    if (!hasFailed){
         const data = await api.getStoredContent();
         await populateFolderContent(data);
     } else {
+        contentContainer_el.classList.add('error');
+        setTimeout(() => {
+            contentContainer_el.classList.remove('error');
+        }, 2000);
         console.log('Error adding file!');
     }
 });
@@ -99,22 +118,29 @@ async function populateFolderContent(contents){
     }
 }
 
-async function contentItemClick(itemContainer, path, locationName){
+async function contentItemClick(itemContainer, path, locationName) {
     itemContainer.addEventListener('click', async () => {
-        const result = await api.isFileOrDirectory({path: path});
+        const result = await api.isFileOrDirectory({ path: path });
         if (result === 'Directory') {
-            folderClick(path, locationName)
-        } else if (result === 'File') { 
+            folderClick(path, locationName);
+        } else if (result === 'File') {
             fileClick(path, locationName);
+        } else if (result === 'Error') {
+            console.log('File does not exist');
+            contentContainer_el.classList.add('error');
+            setTimeout(() => {
+                contentContainer_el.classList.remove('error');
+            }, 2000);
         }
-    })
+    });
 }
+
 
 async function folderClick(path, locationName){
     directoryLocation.push(locationName);
     currentDirectoryLocation = path;
     locationHeader_el.textContent = locationName;
-    const result = await api.getCurrentFolderContents({folderLocation: path})
+    const result = await api.getCurrentFolderContents({folderLocation: path});
     await populateFolderContent(result);
 }
 

@@ -8,7 +8,9 @@ body {
 }
 
 .main-header {
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 div {
@@ -25,6 +27,11 @@ input {
   font-size: 18px;
   border-radius: 10px;
   outline: none;
+}
+
+input.error {
+  box-shadow: inset 0px 0px 10px #ff2b2b;
+  transition: box-shadow 0.25s ease-in-out;
 }
 
 textarea {
@@ -67,10 +74,17 @@ h1,h2,h3,h4,h5,h6 {
   border-radius: 10px;
   margin: 0px 10px 10px 10px;
   box-shadow: inset 0px 0px 10px #415a77;
+  transition: box-shadow 0.5s ease-in;
 }
 
 .container.drop {
-  box-shadow: inset 0px 0px 15px #93a977;
+  box-shadow: inset 0px 0px 15px #97da40;
+  transition: box-shadow 0.5s ease-in-out;
+}
+
+.container.error {
+  box-shadow: inset 0px 0px 15px #ff2b2b;
+  transition: box-shadow 0.5s ease-in-out;
 }
 
 
@@ -130,7 +144,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .home-header-grid {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   padding: 0 20px;
   margin: 0;
 }
@@ -176,9 +190,22 @@ h1,h2,h3,h4,h5,h6 {
   color: rgb(197, 197, 197);
 }
 
+.refresh-button {
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  right: 10px; /* Adjust the right position as needed */
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .file-content-header {
-  text-wrap: nowrap;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 

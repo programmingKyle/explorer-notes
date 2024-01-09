@@ -11,6 +11,8 @@ const baseFileLocation = './src/baseFiles';
 const stored = './src/stored.txt';
 
 ipcMain.handle('open-file-dialog', async () => {
+  let isSaveSuccessful = false; // Initialize isSaveSuccessful
+
   try {
     const result = await dialog.showOpenDialog({
       properties: ['openFile', 'multiSelections'],
@@ -21,15 +23,22 @@ ipcMain.handle('open-file-dialog', async () => {
     });
 
     const selectedPaths = result.filePaths;
-    await saveSelected(selectedPaths);
-    return true;
+
+    // Check if selectedPaths is not empty before attempting to save
+    if (selectedPaths.length > 0) {
+      isSaveSuccessful = await saveSelected(selectedPaths);
+    }
+
+    return isSaveSuccessful;
   } catch (err) {
     console.error('Error opening file dialog:', err);
-    return false;
+    return isSaveSuccessful;
   }
 });
 
 ipcMain.handle('open-directory-dialog', async () => {
+  let isSaveSuccessful = false;
+
   try {
     const result = await dialog.showOpenDialog({
       properties: ['openDirectory', 'multiSelections'],
@@ -37,11 +46,15 @@ ipcMain.handle('open-directory-dialog', async () => {
     });
 
     const selectedPaths = result.filePaths;
-    await saveSelected(selectedPaths);
-    return true;
+
+    if (selectedPaths.length > 0) {
+      isSaveSuccessful = await saveSelected(selectedPaths);
+    }
+
+    return isSaveSuccessful;
   } catch (err) {
     console.error('Error opening directory dialog:', err);
-    return false;
+    return isSaveSuccessful;
   }
 });
 
@@ -49,16 +62,22 @@ async function saveSelected(paths){
   const alreadySavedContent = await fs.promises.readFile(stored, 'utf-8');
   const savedLines = alreadySavedContent.split('\n').filter((line) => line.trim() !== '');
 
+  let saveFailed = false;
+
   paths.forEach(path => {
     if (!savedLines.includes(path)){
       savedLines.push(path);
     } else {
-      console.log("Its here already");
+      saveFailed = true;
     }
   });
 
   const newContent = savedLines.join('\n');
   fs.writeFileSync(stored, newContent + '\n', 'utf-8');
+
+  if (saveFailed){
+    return 'Failed'; //presumed that a fail is only the result of the file or folder already existing 
+  }
 }
 
 ipcMain.handle('get-stored-content', async () => {
@@ -207,8 +226,8 @@ ipcMain.handle('is-file-or-directory', (req, data) => {
     const stats = fs.statSync(data.path);
     return stats.isFile() ? 'File' : stats.isDirectory() ? 'Directory' : 'Unknown';
   } catch (error) {
-      console.error(error);
-      return 'Error';
+    // File doesn't exist
+    return 'Error';
   }
 });
 
@@ -247,7 +266,13 @@ function writeTextFile(path, content){
 
 ipcMain.handle('drop-save-handler', async (req, data) => {
   if (!data || !data.paths) return;
-  await saveSelected(data.paths);
+  const result = await saveSelected(data.paths);
+  if (result === 'Failed'){
+    // A file being saved already exists
+    return 'Failed';
+  } else {
+    return 'Success';
+  }
 });
 
 
