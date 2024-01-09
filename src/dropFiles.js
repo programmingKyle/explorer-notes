@@ -2,6 +2,7 @@ let isDragging = false;
 
 contentContainer_el.addEventListener('dragenter', (e) => {
     if (directoryLocation.length === 0) {
+        contentContainer_el.classList.add('drop');
         e.preventDefault();
         e.stopPropagation();
         if (!isDragging) {
@@ -19,6 +20,7 @@ contentContainer_el.addEventListener('dragover', (e) => {
 
 contentContainer_el.addEventListener('dragleave', (e) => {
     if (directoryLocation.length === 0) {
+        contentContainer_el.classList.remove('drop');
         e.preventDefault();
         e.stopPropagation();
         if (isDragging) {
@@ -29,12 +31,12 @@ contentContainer_el.addEventListener('dragleave', (e) => {
 
 contentContainer_el.addEventListener('drop', async (e) => {
     if (directoryLocation.length === 0) {
+        contentContainer_el.classList.remove('drop');
         e.preventDefault();
         isDragging = false;
 
         let paths = [];
         for (const f of e.dataTransfer.files) {
-            console.log('File Path of dragged files: ', f.path);
             paths.push(f.path);
         }
         await api.dropSaveHandler({ paths: paths });

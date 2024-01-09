@@ -4,7 +4,7 @@ body {
   padding: 0px;
   margin: 0px;
   height: 100vh;
-  background-color: black;
+  background-color: #0d1b2a;
 }
 
 .main-header {
@@ -15,6 +15,38 @@ div {
   margin: 0px;
   padding: 0px;
 }
+
+input {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+  Arial, sans-serif;
+  color: #778da9;
+  background-color: #1b1b1b;
+  border-style: none;
+  font-size: 18px;
+  border-radius: 10px;
+  outline: none;
+}
+
+textarea {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+  Arial, sans-serif;
+  flex: 1;
+  resize: none;
+  background-color: #1b263b;
+  color: #e0e1dd;
+  border-radius: 10px;
+  border-style: none;
+  padding: 10px;
+  font-size: 16px;
+  outline: none;
+  white-space: nowrap;
+  box-shadow: inset 0px 0px 15px #415a77;
+}
+
+textarea.wrapping {
+  white-space: normal; /* or "wrap" depending on your desired behavior */
+}
+
 
 .base-grid {
   height: 100%;
@@ -27,14 +59,20 @@ h1,h2,h3,h4,h5,h6 {
   padding: 5px;
   margin: 0px;
   text-align: center;
-  color: white;
+  color: #e0e1dd;
 }
 
 .container {
-  background-color: rgb(56, 56, 56);
+  background-color: #1b263b;
   border-radius: 10px;
   margin: 0px 10px 10px 10px;
+  box-shadow: inset 0px 0px 10px #415a77;
 }
+
+.container.drop {
+  box-shadow: inset 0px 0px 15px #93a977;
+}
+
 
 .notepad-container {
   background-color: transparent;
@@ -43,8 +81,9 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .findFileFolderContainer{
-  background-color: rgb(56, 56, 56);
+  background-color: #415a77;
   border-radius: 10px;
+  box-shadow: inset 0px 0px 3px #08101a;
 }
 
 .overview-grid {
@@ -64,14 +103,23 @@ h1,h2,h3,h4,h5,h6 {
 
 .button-container i {
   font-size: 50px;
+  color: #778da9;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 1); /* Adjust the values as needed */
 }
+
 
 .user-button {
   padding: 10px;
   margin: 0px 10px 10px 10px;
-  background-color: rgb(73, 158, 255);
+  background-color: #415a77;
   border-style: none;
   border-radius: 10px;
+  color: #e0e1dd;
+  box-shadow: inset 0px 0px 5px #778da9;
+}
+
+.user-button:hover {
+  background-color: #778da9;
 }
 
 .notepad-grid {
@@ -89,10 +137,11 @@ h1,h2,h3,h4,h5,h6 {
 
 .input-button {
   border-radius: 10px;
-  background-color: #7C90DB;
+  background-color: #415a77;
   padding: 10px 0px;
   border-style: none;
-  color: black;
+  color: #e0e1dd;
+  box-shadow: inset 0px 0px 10px #778da9;
 }
 
 .input-button:hover{
@@ -115,19 +164,6 @@ h1,h2,h3,h4,h5,h6 {
 
 .back-button {
   margin: 5px 5px 0px 0px;
-}
-
-textarea {
-  font-family: 'Consolas', monospace;
-  background-color: #252525;
-  color: #9593D9;
-  resize: none;
-  flex: 1;
-  border-radius: 10px;
-  border-style: none;
-  padding: 10px;
-  outline: none;
-  font-size: 16px;
 }
 
 .slim-button {
@@ -165,22 +201,6 @@ textarea {
 
 
 
-textarea {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-  Arial, sans-serif;
-  background-color: #252525;
-  color: #9593D9;
-  border-radius: 10px;
-  border-style: none;
-  padding: 10px;
-  font-size: 16px;
-  outline: none; /* Remove the focus outline */
-  white-space: nowrap;
-}
-
-textarea.wrapping {
-  white-space: normal; /* or "wrap" depending on your desired behavior */
-}
 
 .overlay {
   position: fixed;
