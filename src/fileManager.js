@@ -12,10 +12,6 @@ const addFolderCloseButton_el = document.getElementById('addFolderCloseButton');
 const addFolderInput_el = document.getElementById('addFolderInput');
 const confirmAddNewFolderButton_el = document.getElementById('confirmAddNewFolderButton');
 
-function toggleErrorInput(inputElement){
-
-}
-
 addNewFileButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'flex';
 });

@@ -81,6 +81,10 @@ addFolderButton_el.addEventListener('click', async () => {
     }
 });
 
+contentContainer_el.addEventListener('contextmenu', async (event) => {
+    rightClickMenu(event);
+})
+
 async function populateFolderContent(contents){
     if (contentContainer_el.innerHTML !== ''){
         contentContainer_el.innerHTML = '';
@@ -133,6 +137,11 @@ async function contentItemClick(itemContainer, path, locationName) {
             }, 2000);
         }
     });
+
+    itemContainer.addEventListener('contextmenu', async (event) => {
+        rightClickMenu(event);
+        event.stopPropagation();
+    })
 }
 
 

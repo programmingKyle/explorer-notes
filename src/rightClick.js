@@ -1,4 +1,4 @@
-document.addEventListener('contextmenu', (e) => {
+function rightClickMenu(e){
     e.preventDefault();
 
     const contextMenu = document.getElementById('customContextMenu');
@@ -19,7 +19,7 @@ document.addEventListener('contextmenu', (e) => {
     // Set the adjusted position
     contextMenu.style.left = `${adjustedLeft}px`;
     contextMenu.style.top = `${adjustedTop}px`;
-});
+}
 
 document.addEventListener('click', () => {
     const contextMenu = document.getElementById('customContextMenu');
