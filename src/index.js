@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs-extra');
 
@@ -275,6 +275,22 @@ ipcMain.handle('drop-save-handler', async (req, data) => {
   }
 });
 
+
+ipcMain.handle('open-file-browser', (event, data) => {
+  if (!data || !data.path) return;
+  // Checks if directory is a full one (Windows will start with a drive, Linux will start with /home/)
+  // Folders that are added have a data.path of /src/baseFiles/Folder
+  // Adding Existing Folders will alerady have an absolute directory
+  const isAbsolute = path.isAbsolute(data.path);
+  // If the directory is absolute open it, else construct absolute with function
+  const absolutePath = isAbsolute ? path.dirname(data.path) : constructAbsolutePath(data.path);
+  shell.openPath(absolutePath);
+});
+
+function constructAbsolutePath(relativePath) {
+  const baseDirectory = path.join(app.getAppPath()); // Go up one level from the app directory
+  return path.join(baseDirectory, relativePath);
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {

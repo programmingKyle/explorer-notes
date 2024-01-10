@@ -82,6 +82,7 @@ addFolderButton_el.addEventListener('click', async () => {
 });
 
 contentContainer_el.addEventListener('contextmenu', async (event) => {
+    rightClickItem = 'Background';
     rightClickMenu(event);
 })
 
@@ -123,8 +124,9 @@ async function populateFolderContent(contents){
 }
 
 async function contentItemClick(itemContainer, path, locationName) {
+    const result = await api.isFileOrDirectory({ path: path });
+
     itemContainer.addEventListener('click', async () => {
-        const result = await api.isFileOrDirectory({ path: path });
         if (result === 'Directory') {
             folderClick(path, locationName);
         } else if (result === 'File') {
@@ -139,7 +141,8 @@ async function contentItemClick(itemContainer, path, locationName) {
     });
 
     itemContainer.addEventListener('contextmenu', async (event) => {
-        rightClickMenu(event);
+        rightClickItem = result;
+        rightClickMenu(event, path);
         event.stopPropagation();
     })
 }

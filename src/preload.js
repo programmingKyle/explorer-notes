@@ -16,4 +16,6 @@ contextBridge.exposeInMainWorld('api', {
     textFileHandler: (data) => ipcRenderer.invoke('text-file-handler', data),
 
     dropSaveHandler: (data) => ipcRenderer.invoke('drop-save-handler', data),
+
+    openFileBrowser: (data) => ipcRenderer.invoke('open-file-browser', data),
 });

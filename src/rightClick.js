@@ -1,7 +1,17 @@
-function rightClickMenu(e){
+const contextMenu = document.getElementById('customContextMenu');
+
+const rcFileExplorer_el = document.getElementById('rcFileExplorer');
+
+let rightClickedPath = '';
+
+function rightClickMenu(e, path){
+    menuDisplay(e);
+    rightClickedPath = path;
+}
+
+function menuDisplay(e){
     e.preventDefault();
 
-    const contextMenu = document.getElementById('customContextMenu');
     contextMenu.style.display = 'block';
 
     // Get the dimensions of the context menu
@@ -22,6 +32,11 @@ function rightClickMenu(e){
 }
 
 document.addEventListener('click', () => {
-    const contextMenu = document.getElementById('customContextMenu');
     contextMenu.style.display = 'none';
+    rightClickedPath = '';
+});
+
+rcFileExplorer_el.addEventListener('click', () => {
+    console.log(rightClickedPath);
+    api.openFileBrowser({path: rightClickedPath});
 });
