@@ -7,6 +7,8 @@ const contextBGAddFolder_el = document.getElementById('contextBGAddFolder');
 // Folder/File Click Elements
 const contextMenuFileFolder_el = document.getElementById('contextMenuFileFolder');
 const rcFileExplorer_el = document.getElementById('rcFileExplorer');
+const rcEdit_el = document.getElementById('rcEdit');
+const rcDelete_el = document.getElementById('rcDelete');
 
 let rightClickedPath = '';
 let rightClickItem = '';
@@ -77,4 +79,17 @@ contextBGAddFile_el.addEventListener('click', () => {
 
 contextBGAddFolder_el.addEventListener('click', () => {
     addFolderOverlay_el.style.display = 'flex';
+});
+
+rcEdit_el.addEventListener('click', () => {
+    editOverlay_el.style.display = 'flex';
+    const name = () => {
+        return fileSplit = rightClickedPath.split('\\').pop();
+    }
+    editInput_el.value = name();
+    fileManagerEdit(rightClickedPath, name());
+});
+
+rcDelete_el.addEventListener('click', () => {
+    console.log('Delete file/folder');
 });

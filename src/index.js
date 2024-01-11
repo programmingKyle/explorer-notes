@@ -295,6 +295,31 @@ function constructAbsolutePath(relativePath) {
   return path.join(baseDirectory, parentDirectory);
 }
 
+
+
+
+
+ipcMain.handle('edit-name', async (req, data) => {
+  if (!data || !data.path || !data.newName) return;
+
+  const isAbsolute = path.isAbsolute(data.path);
+  const absolutePath = isAbsolute ? data.path : constructEditPath(data.path);
+
+  try {
+      await fs.rename(absolutePath, path.join(path.dirname(absolutePath), data.newName));
+  } catch (error) {
+      console.error('Error renaming file or folder:', error.message);
+  }
+});
+
+function constructEditPath(relativePath) {
+  const baseDirectory = path.join(app.getAppPath()); // Replace with the actual base directory
+  return path.join(baseDirectory, relativePath);
+}
+
+
+
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();

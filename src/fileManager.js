@@ -12,6 +12,13 @@ const addFolderCloseButton_el = document.getElementById('addFolderCloseButton');
 const addFolderInput_el = document.getElementById('addFolderInput');
 const confirmAddNewFolderButton_el = document.getElementById('confirmAddNewFolderButton');
 
+// Edit Variables
+const editOverlay_el = document.getElementById('editOverlay');
+const editCloseButton_el = document.getElementById('editCloseButton');
+const editInput_el = document.getElementById('editInput');
+const confirmEditButton_el = document.getElementById('confirmEditButton');
+
+
 addNewFileButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'flex';
 });
@@ -24,7 +31,7 @@ confirmAddNewFileButton_el.addEventListener('click', async () => {
     if (addFileInput_el.value !== '') {
         await api.createFile({ location: currentDirectoryLocation, fileName: addFileInput_el.value });
         addFileOverlay_el.style.display = 'none';
-        await repopulateOnAdd();
+        await repopulateContent();
         addFileInput_el.value = '';
     } else {
         addFileInput_el.classList.add('error');
@@ -43,14 +50,14 @@ confirmAddNewFolderButton_el.addEventListener('click', async () => {
     if (addFolderInput_el.value !== ''){
         await api.createFolder({location: currentDirectoryLocation, folderName: addFolderInput_el.value});
         addFolderOverlay_el.style.display = 'none';
-        await repopulateOnAdd();    
+        await repopulateContent();    
         addFolderInput_el.value = '';
     } else {
         addFolderInput_el.classList.add('error');
     }
 });
 
-async function repopulateOnAdd(){
+async function repopulateContent(){
     if (directoryLocation.length < 1){
         const data = await api.getStoredContent();
         await populateFolderContent(data);
@@ -59,7 +66,6 @@ async function repopulateOnAdd(){
         await populateFolderContent(result);
     }
 }
-
 
 // Change Check for error styles
 addFileInput_el.addEventListener('focus', () => {
@@ -73,4 +79,23 @@ addFolderInput_el.addEventListener('focus', () => {
         addFolderInput_el.classList.remove('error');
     }
 })
+
+
+
+function fileManagerEdit(path, oldName) {
+    confirmEditButton_el.addEventListener('click', async () => {
+        editOverlay_el.style.display = 'none';
+        const newName = editInput_el.value;
+        if (newName !== oldName){
+            await api.editName({path, newName});
+        }
+        await repopulateContent();
+    });
+} 
+
+// Edit Buttons
+editCloseButton_el.addEventListener('click', () => {
+    editOverlay_el.style.display = 'none';
+});
+
 

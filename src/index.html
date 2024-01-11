@@ -15,6 +15,8 @@
       </div>
       <div id="contextMenuFileFolder" style="display: none;">
         <div id="rcFileExplorer" class="context-menu-item">Reveal in File Explorer</div>
+        <div id="rcEdit" class="context-menu-item">Edit</div>
+        <div id="rcDelete" class="context-menu-item">Delete</div>
       </div>
     </div>
 
@@ -38,6 +40,17 @@
           </div>
           <input id="addFolderInput" type="text" placeholder="Folder name" style="padding: 10px;">
           <button id="confirmAddNewFolderButton" class="input-button">Add Folder</button>
+      </div>
+    </div>
+
+    <div id="editOverlay" class="overlay" style="display: none;">
+      <div class="centered-container" style="text-align: center;">
+          <div style="display: grid; grid-template-columns: 1fr auto;">
+              <h2>Edit Name</h2>
+              <button id="editCloseButton" class="slim-button fa-solid fa-x"></button>
+          </div>
+          <input id="editInput" type="text" placeholder="Filename with extension" style="padding: 10px;">
+          <button id="confirmEditButton" class="input-button">Confirm Edit</button>
       </div>
     </div>
 
