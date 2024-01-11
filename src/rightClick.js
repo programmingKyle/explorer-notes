@@ -70,3 +70,11 @@ document.addEventListener('click', () => {
 rcFileExplorer_el.addEventListener('click', () => {
     api.openFileBrowser({path: rightClickedPath});
 });
+
+contextBGAddFile_el.addEventListener('click', () => {
+    addFileOverlay_el.style.display = 'flex';
+});
+
+contextBGAddFolder_el.addEventListener('click', () => {
+    addFolderOverlay_el.style.display = 'flex';
+});
