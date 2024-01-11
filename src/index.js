@@ -312,10 +312,26 @@ ipcMain.handle('edit-name', async (req, data) => {
   }
 });
 
+// Used for both edit and delete
 function constructEditPath(relativePath) {
   const baseDirectory = path.join(app.getAppPath()); // Replace with the actual base directory
   return path.join(baseDirectory, relativePath);
 }
+
+ipcMain.handle('delete-name', async (req, data) => {
+  console.log(data);
+  if (!data || !data.path) return;
+  const isAbsolute = path.isAbsolute(data.path);
+  const absolutePath = isAbsolute ? data.path : constructEditPath(data.path);
+
+  try {
+      // Delete the file or folder
+      await fs.rm(absolutePath, { recursive: true });
+      console.log('File or folder deleted successfully.');
+  } catch (error) {
+      console.error('Error deleting file or folder:', error.message);
+  }
+});
 
 
 

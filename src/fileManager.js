@@ -18,6 +18,12 @@ const editCloseButton_el = document.getElementById('editCloseButton');
 const editInput_el = document.getElementById('editInput');
 const confirmEditButton_el = document.getElementById('confirmEditButton');
 
+// Delete Variables
+const deleteOverlay_el = document.getElementById('deleteOverlay');
+const deleteCloseButton_el = document.getElementById('deleteCloseButton');
+const deleteInput_el = document.getElementById('deleteInput');
+const confirmDeleteButton_el = document.getElementById('confirmDeleteButton');
+
 
 addNewFileButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'flex';
@@ -25,6 +31,7 @@ addNewFileButton_el.addEventListener('click', () => {
 
 addFileCloseButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'none';
+    addFileInput_el.value = '';
 });
 
 confirmAddNewFileButton_el.addEventListener('click', async () => {
@@ -44,6 +51,7 @@ addNewFolderButton_el.addEventListener('click', () => {
 
 addFolderCloseButton_el.addEventListener('click', () => {
     addFolderOverlay_el.style.display = 'none';
+    addFolderInput_el.value = '';
 });
 
 confirmAddNewFolderButton_el.addEventListener('click', async () => {
@@ -96,6 +104,25 @@ function fileManagerEdit(path, oldName) {
 // Edit Buttons
 editCloseButton_el.addEventListener('click', () => {
     editOverlay_el.style.display = 'none';
+    editInput_el.value = '';
 });
 
+
+
+function fileManagerDelete(path){
+    confirmDeleteButton_el.addEventListener('click', async () => {
+        if (deleteInput_el.value === 'DELETE'){
+            console.log(path);
+            deleteInput_el.value = '';
+            deleteOverlay_el.style.display = 'none';
+            await api.deleteName({path});
+            await repopulateContent();
+        }
+    });
+}
+
+deleteCloseButton_el.addEventListener('click', () => {
+    deleteOverlay_el.style.display = 'none';
+    deleteInput_el.value = '';
+});
 

@@ -92,4 +92,6 @@ rcEdit_el.addEventListener('click', () => {
 
 rcDelete_el.addEventListener('click', () => {
     console.log('Delete file/folder');
+    deleteOverlay_el.style.display = 'flex';
+    fileManagerDelete(rightClickedPath);
 });
