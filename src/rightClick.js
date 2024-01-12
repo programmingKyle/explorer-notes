@@ -9,7 +9,6 @@ const contextMenuFileFolder_el = document.getElementById('contextMenuFileFolder'
 const rcFileExplorer_el = document.getElementById('rcFileExplorer');
 const rcEdit_el = document.getElementById('rcEdit');
 const rcDelete_el = document.getElementById('rcDelete');
-
 // Will only be displayed if folder is a linked folder
 const rcRemove_el = document.getElementById('rcRemove');
 
@@ -26,22 +25,27 @@ function rightClickMenu(e, path){
             break;
         case 'File':
             contextMenuFileFolder_el.style.display = 'grid';
+            if (storedContent.includes(path) && directoryLocation.length === 0){
+                rcRemove_el.style.display = 'grid';
+            }
             break;
         case 'Directory':
             contextMenuFileFolder_el.style.display = 'grid';
+            if (storedContent.includes(path) && directoryLocation.length === 0){
+                rcRemove_el.style.display = 'grid';
+            }
             break;
     }
 }
 
 function hideContextMenuContent() {
-    const elementsToHide = [contextMenuBackground_el, contextMenuFileFolder_el];
+    const elementsToHide = [contextMenuBackground_el, contextMenuFileFolder_el, rcRemove_el];
     elementsToHide.forEach(element => {
         if (element.style.display === 'grid') {
             element.style.display = 'none';
         }
     });
 }
-
 
 function menuDisplay(e) {
     e.preventDefault();
@@ -100,7 +104,11 @@ rcEdit_el.addEventListener('click', () => {
 });
 
 rcDelete_el.addEventListener('click', () => {
-    console.log('Delete file/folder');
     deleteOverlay_el.style.display = 'flex';
     fileManagerDelete(rightClickedPath);
+});
+
+rcRemove_el.addEventListener('click', async () => {
+    removeOverlay_el.style.display = 'flex';
+    fileManagerRemove(rightClickedPath);
 });

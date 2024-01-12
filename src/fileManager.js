@@ -24,6 +24,11 @@ const deleteCloseButton_el = document.getElementById('deleteCloseButton');
 const deleteInput_el = document.getElementById('deleteInput');
 const confirmDeleteButton_el = document.getElementById('confirmDeleteButton');
 
+// Remove Variables
+const removeOverlay_el = document.getElementById('removeOverlay');
+const confirmRemoveButton_el = document.getElementById('confirmRemoveButton');
+const cancelRemoveButton_el = document.getElementById('cancelRemoveButton');
+
 
 addNewFileButton_el.addEventListener('click', () => {
     addFileOverlay_el.style.display = 'flex';
@@ -112,7 +117,6 @@ editCloseButton_el.addEventListener('click', () => {
 function fileManagerDelete(path){
     confirmDeleteButton_el.addEventListener('click', async () => {
         if (deleteInput_el.value === 'DELETE'){
-            console.log(path);
             deleteInput_el.value = '';
             deleteOverlay_el.style.display = 'none';
             await api.deleteName({path});
@@ -126,3 +130,19 @@ deleteCloseButton_el.addEventListener('click', () => {
     deleteInput_el.value = '';
 });
 
+
+
+//await api.removeFromStored({path: rightClickedPath});
+
+function fileManagerRemove(path){
+    confirmRemoveButton_el.addEventListener('click', async () => {
+        removeOverlay_el.style.display = 'none';
+        await api.removeFromStored({path});
+        await repopulateContent();
+    });
+
+    cancelRemoveButton_el.addEventListener('click', async () => {
+        removeOverlay_el.style.display = 'none';
+    });
+
+}

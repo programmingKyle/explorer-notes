@@ -20,6 +20,8 @@ contextBridge.exposeInMainWorld('api', {
 
     openFileBrowser: (data) => ipcRenderer.invoke('open-file-browser', data),
 
+    removeFromStored: (data) => ipcRenderer.invoke('remove-from-stored', data),
+
     editName: (data) => ipcRenderer.invoke('edit-name', data),
     deleteName: (data) => ipcRenderer.invoke('delete-name', data),
 });

@@ -331,7 +331,6 @@ ipcMain.handle('delete-name', async (req, data) => {
   const absolutePath = isAbsolute ? data.path : constructEditPath(data.path);
 
   try {
-      // Delete the file or folder
       await fs.rm(absolutePath, { recursive: true });
       console.log('File or folder deleted successfully.');
   } catch (error) {
@@ -339,6 +338,20 @@ ipcMain.handle('delete-name', async (req, data) => {
   }
 });
 
+const fsPromises = require('fs').promises;
+
+ipcMain.handle('remove-from-stored', async (req, data) => {
+  if (!data || !data.path) return;
+  const storedContent = await fsPromises.readFile(stored, 'utf-8');
+  const savedLines = storedContent.split('\n').filter((line) => line.trim() !== '');
+
+  if (savedLines.includes(data.path)) {
+    const updatedLines = savedLines.filter((line) => line !== data.path);
+    const updatedContent = updatedLines.join('\n');
+    await fsPromises.writeFile(stored, updatedContent);
+    console.log('Line removed:', data.path);
+  }
+});
 
 
 
