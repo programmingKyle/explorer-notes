@@ -1,11 +1,9 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs-extra');
-
+const fsPromises = require('fs').promises;
 const util = require('util');
 const readdir = util.promisify(fs.readdir);
-
-const acceptedExtensions = ['.txt', '.py', '.js', '.html', '.css', '.json', '.xml', '.md'];
 
 const baseFileLocation = './src/baseFiles';
 const stored = './src/stored.txt';
@@ -192,8 +190,6 @@ function addExtension(fileName) {
   return ext !== '' ? fileName : fileName + '.txt';
 }
 
-
-
 ipcMain.handle('create-folder', (req, data) => {
   if (!data || !data.folderName) return;
 
@@ -281,7 +277,6 @@ ipcMain.handle('drop-save-handler', async (req, data) => {
   }
 });
 
-
 ipcMain.handle('open-file-browser', (event, data) => {
   if (!data || !data.path) return;
 
@@ -300,10 +295,6 @@ function constructAbsolutePath(relativePath) {
   const parentDirectory = path.dirname(relativePath);
   return path.join(baseDirectory, parentDirectory);
 }
-
-
-
-
 
 ipcMain.handle('edit-name', async (req, data) => {
   if (!data || !data.path || !data.newName) return;
@@ -332,17 +323,14 @@ ipcMain.handle('delete-name', async (req, data) => {
   try {
       await fs.rm(absolutePath, { recursive: true });
       await removeFromStoredFile(data.path);
-      console.log('File or folder deleted successfully.');
   } catch (error) {
       console.error('Error deleting file or folder:', error.message);
   }
 });
 
-const fsPromises = require('fs').promises;
-
 ipcMain.handle('remove-from-stored', async (req, data) => {
   if (!data || !data.path) return;
-  removeFromStoredFile(data.path);
+  await removeFromStoredFile(data.path);
 });
 
 async function removeFromStoredFile(path){
@@ -381,7 +369,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished

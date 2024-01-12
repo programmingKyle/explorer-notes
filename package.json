@@ -1,8 +1,8 @@
 {
-  "name": "quick-notes",
-  "productName": "quick-notes",
+  "name": "explorer-notes",
+  "productName": "explorer-notes",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Keep all your important files in one place! Even comes with a handy notepad!",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",

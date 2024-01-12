@@ -71,7 +71,7 @@ confirmAddNewFolderButton_el.addEventListener('click', async () => {
 });
 
 async function repopulateContent(){
-    if (directoryLocation.length < 1){
+    if (directoryLocation.length === 0){
         const data = await api.getAllContent();
         await populateFolderContent(data);
     } else {
@@ -129,10 +129,6 @@ deleteCloseButton_el.addEventListener('click', () => {
     deleteOverlay_el.style.display = 'none';
     deleteInput_el.value = '';
 });
-
-
-
-//await api.removeFromStored({path: rightClickedPath});
 
 function fileManagerRemove(path){
     confirmRemoveButton_el.addEventListener('click', async () => {
