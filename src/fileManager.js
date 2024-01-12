@@ -67,7 +67,7 @@ confirmAddNewFolderButton_el.addEventListener('click', async () => {
 
 async function repopulateContent(){
     if (directoryLocation.length < 1){
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     } else {
         const result = await api.getCurrentFolderContents({folderLocation: currentDirectoryLocation});

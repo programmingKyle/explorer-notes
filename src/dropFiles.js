@@ -46,7 +46,7 @@ contentContainer_el.addEventListener('drop', async (e) => {
                 contentContainer_el.classList.remove('error');
             }, 2000);
         }
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     }
 });

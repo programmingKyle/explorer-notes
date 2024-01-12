@@ -8,16 +8,17 @@ const refreshButton_el = document.getElementById('refreshButton');
 
 const directoryLocation = [];
 let currentDirectoryLocation = '';
+let storedContent;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!returnFromNotepad()) {
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     } else if (directoryLocation.length >= 1) {
         const result = await api.getCurrentFolderContents({ folderLocation: currentDirectoryLocation });
         await populateFolderContent(result);
     } else {
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     }
 });
@@ -27,7 +28,7 @@ refreshButton_el.addEventListener('click', async () => {
         const result = await api.getCurrentFolderContents({ folderLocation: currentDirectoryLocation });
         await populateFolderContent(result);
     } else {
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     }
 });
@@ -45,7 +46,7 @@ function returnFromNotepad() {
             const parsedDirectoryLocation = JSON.parse(decodeURIComponent(directoryLocationString));
 
             // Push elements into directoryLocation array
-            parsedDirectoryLocation.forEach(element => {
+            parsedDirectoryLocation.forEach(element => {F
                 directoryLocation.push(element);
             });
         }
@@ -56,7 +57,7 @@ function returnFromNotepad() {
 addFileButton_el.addEventListener('click', async () => {
     const hasFailed = await api.openFileDialog();
     if (!hasFailed){
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     } else {
         contentContainer_el.classList.add('error');
@@ -70,7 +71,7 @@ addFileButton_el.addEventListener('click', async () => {
 addFolderButton_el.addEventListener('click', async () => {
     const hasFailed = await api.openDirectoryDialog();
     if (!hasFailed){
-        const data = await api.getStoredContent();
+        const data = await api.getAllContent();
         await populateFolderContent(data);
     } else {
         contentContainer_el.classList.add('error');
@@ -87,6 +88,7 @@ contentContainer_el.addEventListener('contextmenu', async (event) => {
 })
 
 async function populateFolderContent(contents){
+    storedContent = await api.getStoredContent();
     if (contentContainer_el.innerHTML !== ''){
         contentContainer_el.innerHTML = '';
     }
@@ -102,14 +104,13 @@ async function populateFolderContent(contents){
         const fileName = filePathArray[filePathArray.length -1];
 
         const icon = isFileOrFolder(fileName);
-        
 
         const itemContainer_el = document.createElement('div');
         itemContainer_el.classList = 'button-container';
     
         const itemIcon_el = document.createElement('i');
-        itemIcon_el.classList = icon;
-    
+        itemIcon_el.classList = `${icon} content-item`;
+   
         const itemHeader_el = document.createElement('h6');
         itemHeader_el.classList = 'file-content-header';
         itemHeader_el.textContent = fileName;
@@ -119,6 +120,16 @@ async function populateFolderContent(contents){
         itemContainer_el.append(itemHeader_el);
     
         contentContainer_el.append(itemContainer_el);
+
+        if (storedContent.includes(content)){
+            itemIcon_el.classList.add('linked');
+        }
+
+        if (storedContent.includes(currentDirectoryLocation)){
+            console.log('Current directory is in stored information');
+            itemIcon_el.classList.add('linked');
+        }
+
         await contentItemClick(itemContainer_el, content, fileName);
     }
 }
@@ -188,7 +199,7 @@ function populateBackButtonFolder(){
     itemContainer_el.classList = 'button-container';
 
     const itemIcon_el = document.createElement('i');
-    itemIcon_el.classList = 'fas fa-arrow-left';
+    itemIcon_el.classList = 'fas fa-arrow-left content-item';
 
     const itemHeader_el = document.createElement('h6');
     itemHeader_el.classList = 'file-content-header';
@@ -198,6 +209,10 @@ function populateBackButtonFolder(){
     itemContainer_el.append(itemHeader_el);
 
     contentContainer_el.append(itemContainer_el);
+
+    if (storedContent.includes(currentDirectoryLocation)){
+        itemIcon_el.classList.add('linked');
+    }
     backButtonClick(itemContainer_el);
 }
 
@@ -207,7 +222,7 @@ function backButtonClick(container) {
 
         if (directoryLocation.length < 1) {
             locationHeader_el.textContent = 'Overview';
-            const data = await api.getStoredContent();
+            const data = await api.getAllContent();
             await populateFolderContent(data);
         } else {
             try {

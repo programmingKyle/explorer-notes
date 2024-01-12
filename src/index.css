@@ -54,6 +54,17 @@ textarea.wrapping {
   white-space: normal; /* or "wrap" depending on your desired behavior */
 }
 
+.content-item {
+  font-size: 50px;
+  color: #53a565;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 1);
+}
+
+.content-item.linked {
+  color: #778da9;
+}
+
+
 
 .base-grid {
   height: 100%;
@@ -114,13 +125,6 @@ h1,h2,h3,h4,h5,h6 {
   grid-template-rows: 1fr auto;
   text-align: center;
 }
-
-.button-container i {
-  font-size: 50px;
-  color: #778da9;
-  text-shadow: 3px 3px 10px rgba(0, 0, 0, 1); /* Adjust the values as needed */
-}
-
 
 .user-button {
   padding: 10px;

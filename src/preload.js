@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('api', {
     openFileDialog: (data) => ipcRenderer.invoke('open-file-dialog', data),
     openDirectoryDialog: (data) => ipcRenderer.invoke('open-directory-dialog', data),
 
+    getAllContent: () => ipcRenderer.invoke('get-all-content'),
     getStoredContent: () => ipcRenderer.invoke('get-stored-content'),
 
     getCurrentFolderContents: (data) => ipcRenderer.invoke('get-current-folder-contents', data),

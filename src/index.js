@@ -80,7 +80,7 @@ async function saveSelected(paths){
   }
 }
 
-ipcMain.handle('get-stored-content', async () => {
+ipcMain.handle('get-all-content', async () => {
   const alreadySavedContent = await fs.promises.readFile(stored, 'utf-8');
   const savedLines = alreadySavedContent.split('\n').filter((line) => line.trim() !== '');
 
@@ -88,6 +88,12 @@ ipcMain.handle('get-stored-content', async () => {
   baseFileResults.forEach(element => {
     savedLines.push(element);    
   });
+  return savedLines;
+});
+
+ipcMain.handle('get-stored-content', async () => {
+  const alreadySavedContent = await fs.promises.readFile(stored, 'utf-8');
+  const savedLines = alreadySavedContent.split('\n').filter((line) => line.trim() !== '');
   return savedLines;
 });
 
