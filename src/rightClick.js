@@ -10,6 +10,9 @@ const rcFileExplorer_el = document.getElementById('rcFileExplorer');
 const rcEdit_el = document.getElementById('rcEdit');
 const rcDelete_el = document.getElementById('rcDelete');
 
+// Will only be displayed if folder is a linked folder
+const rcRemove_el = document.getElementById('rcRemove');
+
 let rightClickedPath = '';
 let rightClickItem = '';
 
@@ -17,7 +20,6 @@ function rightClickMenu(e, path){
     hideContextMenuContent();
     menuDisplay(e);
     rightClickedPath = path;
-
     switch (rightClickItem){
         case 'Background':
             contextMenuBackground_el.style.display = 'grid';
@@ -41,27 +43,34 @@ function hideContextMenuContent() {
 }
 
 
-function menuDisplay(e){
+function menuDisplay(e) {
     e.preventDefault();
 
     customContextMenu_el.style.display = 'block';
 
-    // Get the dimensions of the context menu
-    const menuWidth = customContextMenu_el.offsetWidth;
-    const menuHeight = customContextMenu_el.offsetHeight;
+    // Reset position and size properties
+    customContextMenu_el.style.right = 'auto';
+    customContextMenu_el.style.bottom = 'auto';
+    customContextMenu_el.style.width = 'auto'; // e.g., '200px'
+    customContextMenu_el.style.height = 'auto'; // e.g., '150px'
 
     // Get the dimensions of the window
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
     // Calculate the adjusted position to ensure the menu stays within the window
-    const adjustedLeft = e.clientX + menuWidth > windowWidth ? windowWidth - menuWidth : e.clientX;
-    const adjustedTop = e.clientY + menuHeight > windowHeight ? windowHeight - menuHeight : e.clientY;
+    const adjustedRight = windowWidth - e.clientX;
+    const adjustedBottom = windowHeight - e.clientY;
 
-    // Set the adjusted position
-    customContextMenu_el.style.left = `${adjustedLeft}px`;
-    customContextMenu_el.style.top = `${adjustedTop}px`;
+    // Adjust the position based on the mouse click
+    customContextMenu_el.style.left = e.clientX <= windowWidth / 2 ? `${e.clientX}px` : 'auto';
+    customContextMenu_el.style.right = e.clientX > windowWidth / 2 ? `${adjustedRight}px` : 'auto';
+    customContextMenu_el.style.top = e.clientY <= windowHeight / 2 ? `${e.clientY}px` : 'auto';
+    customContextMenu_el.style.bottom = e.clientY > windowHeight / 2 ? `${adjustedBottom}px` : 'auto';
 }
+
+
+
 
 document.addEventListener('click', () => {
     customContextMenu_el.style.display = 'none';
